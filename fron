@@ -1,1 +1,183 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>HW #1</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        th {
+            background-color: #d12a1d;
+        }
+        tr:hover {
+            background-color: #d12a1d;
+        }
+        .dropdown {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            padding: 12px 16px;
+            z-index: 1;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        ul {
+            list-style-type: none;
+            margin:0;
+            padding:0;
+            overflow: hidden;
+            background-color: aliceblue;
+            position: fixed;
+            top: 0;
+            width: 100%;
+        }
+        li {
+            float: left;
+        }
+        li a {
+            display: block;
+            color: #666666;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-family:Brush Script MT;
+        }
+        li a:hover {
+            color: #d12a1d;
+        }
+    </style>
+    <script>
+        function handleCheckboxChange(checkboxId, numericInputId) {
+            var checkbox = document.getElementById(checkboxId);
+            var numericInput = document.getElementById(numericInputId);
+
+            if (checkbox.checked) {
+                numericInput.disabled = false;
+                numericInput.value = 1;
+            } else {
+                numericInput.disabled = true;
+                numericInput.value = "";
+            }
+        }
+
+        function handleNumericInputBlur(checkboxId, numericInputId) {
+            var checkbox = document.getElementById(checkboxId);
+            var numericInput = document.getElementById(numericInputId);
+
+            if (numericInput.value === "") {
+                checkbox.checked = false;
+                numericInput.disabled = true;
+            }
+        }
+
+        function handleSubmit() {
+            var summary = "Order Summary:\n";
+            var rows = document.getElementsByTagName("tr");
+
+            for (var i = 1; i < rows.length; i++) {
+                var checkbox = rows[i].getElementsByTagName("input")[0];
+                var numericInput = rows[i].getElementsByTagName("input")[1];
+
+                if (checkbox.checked) {
+                    var product = rows[i].getElementsByTagName("td")[2].getElementsByTagName("div")[0].innerText;
+                    var quantity = numericInput.value;
+                    summary += product + ": " + quantity + "\n";
+                }
+            }
+
+            alert(summary);
+        }
+    </script>
+</head>
+
+<body>
+<ul class="navbar">
+    <li><a class="active" href="#home">Home</a></li>
+    <li><a href="#about">About</a></li>
+</ul>
+<div id="home" class="invisible-anchor"></div>
+
+<div style="font-family:Brush Script MT;padding-top: 20px;color: #d12a1d;">
+    <h1>Fender Guitars</h1>
+</div>
+<p>
+    Make and submit an order of up to 10 Fender Stratocasters, Telecasters, Jazzmaster, and Acoustasonics.
+</p>
+
+<form onsubmit="handleSubmit(); return false;">
+    <table>
+        <tr style="background-color: #831313;">
+            <th>Check</th>
+            <th>Number</th>
+            <th>Product</th>
+            <th>More Info</th>
+        </tr>
+        <tr style="hover: background-color #831313;">
+            <td><input type="checkbox" id="check1" onchange="handleCheckboxChange('check1', 'num1')"></td>
+            <td><input type="number" min="1" max="10" disabled id="num1" onblur="handleNumericInputBlur('check1', 'num1')"></td>
+            <td class="dropdown">
+                <div>Stratocaster</div>
+                <div class="dropdown-content">
+                    <p>Description: A versatile electric guitar known for its iconic sound and design.</p>
+                </div>
+            </td>
+            <td><a href="https://www.fender.com/en-US/electric-guitars/stratocaster/">https://www.fender.com/en-US/electric-guitars/stratocaster/</a></td>
+        </tr>
+        <tr style="hover: background-color #831313;">
+            <td><input type="checkbox" id="check2" onchange="handleCheckboxChange('check2', 'num2')"></td>
+            <td><input type="number" min="1" max="10" disabled id="num2" onblur="handleNumericInputBlur('check2', 'num2')"></td>
+            <td class="dropdown">
+                <div>Telecaster</div>
+                <div class="dropdown-content">
+                    <p>Description: A versatile electric guitar known for its iconic sound and design.</p>
+                </div>
+            </td>
+            <td><a href="https://www.fender.com/en-US/electric-guitars/telecaster/">https://www.fender.com/en-US/electric-guitars/telecaster/</a></td>
+        </tr>
+        <tr style="hover: background-color #831313;">
+            <td><input type="checkbox" id="check3" onchange="handleCheckboxChange('check3', 'num3')"></td>
+            <td><input type="number" min="1" max="10" disabled id="num3" onblur="handleNumericInputBlur('check3', 'num3')"></td>
+            <td class="dropdown">
+                <div>Jazzmaster</div>
+                <div class="dropdown-content">
+                    <p>Description: A versatile electric guitar known for its iconic sound and design.</p>
+                </div>
+            </td>
+            <td><a href="https://www.fender.com/en-US/electric-guitars/jazzmaster/">https://www.fender.com/en-US/electric-guitars/jazzmaster/</a></td>
+        </tr>
+        <tr style="hover: background-color #831313;">
+            <td><input type="checkbox" id="check4" onchange="handleCheckboxChange('check4', 'num4')"></td>
+            <td><input type="number" min="1" max="10" disabled id="num4" onblur="handleNumericInputBlur('check4', 'num4')"></td>
+            <td class="dropdown">
+                <div>Acoustasonic</div>
+                <div class="dropdown-content">
+                    <p>Description: A versatile electric guitar known for its iconic sound and design.</p>
+                </div>
+            </td>
+            <td><a href="https://www.fender.com/en-US/acoustasonic-guitars/">https://www.fender.com/en-US/acoustasonic-guitars/</a></td>
+        </tr>
+
+    </table>
+    <button type="submit">Submit</button>
+    <button type="reset">Reset</button>
+</form>
+
+<p>text</p>
+<p>text</p>
+
+
+<div id="about" style="background-color: #f9f9f9;color:#666666; padding: 20px;">
+    <h2>About</h2>
+    <p>Osei-Tutu Hansen is a Sophomore at Eastern Connecticut State University</p>
+</div>
+</body>
+
+</html>

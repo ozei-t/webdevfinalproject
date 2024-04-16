@@ -1,0 +1,50 @@
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th {
+    background-color: #d12a1d;
+}
+tr:hover {
+    background-color: #d12a1d;
+}
+.dropdown {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    z-index: 1;
+}
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+ul {
+    list-style-type: none;
+    margin:0;
+    padding:0;
+    overflow: hidden;
+    background-color: aliceblue;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+li {
+    float: left;
+}
+li a {
+    display: block;
+    color: #666666;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-family:Brush Script MT;
+}
+li a:hover {
+    color: #d12a1d;
+}
