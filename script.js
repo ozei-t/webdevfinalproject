@@ -40,3 +40,4 @@ function displaySearchResults(results) {
         searchResultsDiv.appendChild(resultDiv);
     });
 }
+grlkg
