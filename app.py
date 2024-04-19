@@ -25,7 +25,7 @@ def get_artist_songs_by_pop(artist_name, max_songs = None):
         songs = []
         page = 1
         while page:
-            request = genius.artist_songs(artist._id, sort ='populatrty', per_page=50, page=page)
+            request = genius.artist_songs(artist.id, sort ='populatrty', per_page=50, page=page)
             songs.extend(request['songs'])
             page = request['next_page']
 
