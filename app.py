@@ -2,7 +2,7 @@ from flask import Flask, request, render_template
 from lyricsgenius import Genius
 
 app = Flask(__name__)
-genius = Genius('WgL88zDw74vN0BHApKBu4Mfoz_EObXEFHKgxUlfdIhUcgZFvp5Vi7RcL0hs8J3rL')
+genius = Genius('WgL88zDw74vN0BHApKBu4Mfoz_EObXEFHKgxUlfdIhUcgZFvp5Vi7RcL0hs8J3rL', timeout=10)
 
 @app.route('/')
 def index():
@@ -25,21 +25,15 @@ def get_artist_songs_by_pop(artist_name, max_songs = None):
         songs = []
         page = 1
         while page:
-            request = genius.artist_songs(artist.id, sort ='populatrty', per_page=50, page=page)
+            request = genius.artist_songs(artist.id, sort ='popularity', per_page=50, page=page)
             songs.extend(request['songs'])
             page = request['next_page']
 
         #sort the songs
-        sorted_songs = sorted(songs,key=lambda x: x['stats']['pageviews'], reverse=True)
+        sorted_songs = sorted(songs,key=lambda x: x.get('stats', {}).get('pageviews', 0), reverse=True)
         return sorted_songs
     
-#def printSortedSongs(artist_name, max_songs=None):
-#    sorted_songs = getArtistSongsByPop(artist_name,max_songs)
-#    if sorted_songs:
-#        for song in sorted_songs:
-#            print(song['title'])
 
-#printSortedSongs('​kevin abstract')
 
 if __name__ ==  '__main__':
     app.run(debug=True)
