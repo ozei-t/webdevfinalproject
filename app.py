@@ -34,9 +34,9 @@ def get_artist_songs_by_pop(artist_name, max_songs = None):
         return sorted_songs
     
 def printSortedSongs(artist_name, max_songs=None):
+    sorted_songs = getArtistSongsByPop(artist_name,max_songs)
+    if sorted_songs:
+        for song in sorted_songs:
+            print(song['title'])
 
-
-if __name__ ==  '__main__':
-    app.run(debug=True)
-
-
+printSortedSongs('​kevin abstract')
