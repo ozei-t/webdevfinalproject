@@ -33,10 +33,13 @@ def get_artist_songs_by_pop(artist_name, max_songs = None):
         sorted_songs = sorted(songs,key=lambda x: x['stats']['pageviews'], reverse=True)
         return sorted_songs
     
-def printSortedSongs(artist_name, max_songs=None):
-    sorted_songs = getArtistSongsByPop(artist_name,max_songs)
-    if sorted_songs:
-        for song in sorted_songs:
-            print(song['title'])
+#def printSortedSongs(artist_name, max_songs=None):
+#    sorted_songs = getArtistSongsByPop(artist_name,max_songs)
+#    if sorted_songs:
+#        for song in sorted_songs:
+#            print(song['title'])
 
-printSortedSongs('​kevin abstract')
+#printSortedSongs('​kevin abstract')
+
+if __name__ ==  '__main__':
+    app.run(debug=True)
