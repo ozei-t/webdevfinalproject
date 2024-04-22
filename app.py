@@ -5,6 +5,8 @@ import random
 app = Flask(__name__)
 genius = Genius('WgL88zDw74vN0BHApKBu4Mfoz_EObXEFHKgxUlfdIhUcgZFvp5Vi7RcL0hs8J3rL', timeout=10)
 
+sorted_songs = []
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -19,33 +21,23 @@ def search():
             # Return URL of results page
             return redirect(url_for('results', artist=artist_name))
     return 'No Songs Found for artist'
+    
 
-@app.route('/loading')
-def loading():
-    artist_name = request.args.get('artist')
-    if artist_name:
-        sorted_songs = get_artist_songs_by_pop(artist_name)
-        if sorted_songs:
-            # If songs are found, redirect to the results page
-            return redirect(url_for('results', artist=artist_name))
-    return render_template('loading.html')
 
 @app.route('/results/<artist>')
 def results(artist):
-    sorted_songs = get_artist_songs_by_pop(artist)
-    if sorted_songs:
         song_lyrics = {}
         for song in sorted_songs:
             song_title = song['title']
             song_obj = genius.search_song(song_title, artist)
             if song_obj:
- #               song_lyrics[song_title] = random.choice(song_obj.lyrics.lyrics.split('\n'))
+                song_lyrics[song_title] = random.choice(song_obj.lyrics.lyrics.split('\n'))
                 song_lyrics[song_title] = random_lyric
             else:
                  song_lyrics[song_title] = "Lyrics not found"
         return render_template('results.html', artist=artist, song_lyrics=song_lyrics)
-    else:
-        return "No songs Found"
+
+    
 
 def get_artist_songs_by_pop(artist_name, max_songs=None):
     try:
@@ -54,7 +46,7 @@ def get_artist_songs_by_pop(artist_name, max_songs=None):
             songs = []
             page = 1
             while page:
-                request = genius.artist_songs(artist.id, sort='popularity', per_page=50, page=page)
+                request = genius.artist_songs(artist.id, sort='popularity', per_page=50, page=page)#ser to low numer change per page to higher 50 when not trsting
                 if 'next_page' not in request or len(request['songs']) == 0:
                     break
                 songs.extend(request['songs'])
