@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template, redirect, url_for
 from lyricsgenius import Genius
+import random
 
 app = Flask(__name__)
 genius = Genius('WgL88zDw74vN0BHApKBu4Mfoz_EObXEFHKgxUlfdIhUcgZFvp5Vi7RcL0hs8J3rL', timeout=10)
@@ -16,7 +17,7 @@ def search():
         if sorted_songs:
             song_titles = [song['title'] for song in sorted_songs]
             # Return URL of results page
-            return url_for('results', artist=artist_name)
+            return redirect(url_for('results', artist=artist_name))
     return 'No Songs Found for artist'
 
 @app.route('/loading')
@@ -32,8 +33,19 @@ def loading():
 @app.route('/results/<artist>')
 def results(artist):
     sorted_songs = get_artist_songs_by_pop(artist)
-    song_titles = [song['title'] for song in sorted_songs]
-    return render_template('results.html', artist=artist, songs=song_titles)
+    if sorted_songs:
+        song_lyrics = {}
+        for song in sorted_songs:
+            song_title = song['title']
+            song_obj = genius.search_song(song_title, artist)
+            if song_obj:
+ #               song_lyrics[song_title] = random.choice(song_obj.lyrics.lyrics.split('\n'))
+                song_lyrics[song_title] = random_lyric
+            else:
+                 song_lyrics[song_title] = "Lyrics not found"
+        return render_template('results.html', artist=artist, song_lyrics=song_lyrics)
+    else:
+        return "No songs Found"
 
 def get_artist_songs_by_pop(artist_name, max_songs=None):
     try:
@@ -54,6 +66,7 @@ def get_artist_songs_by_pop(artist_name, max_songs=None):
     except Exception as e:
         print(f"An error occurred while fetching songs: {e}")
         return None
+
 
 if __name__ == '__main__':
     app.run(debug=True)

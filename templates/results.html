@@ -8,9 +8,9 @@
 <body>
 <h1>Songs by {{ artist }}</h1>
 <ul>
-    {% for song in songs%}
-        <li>{{ song }}</li>
-        {% endfor %}
+    {% for song, lyric in song_lyrics.items() %}
+        <li><strong>{{ song }}</strong>: {{ lyric }}</li>
+    {% endfor %}
 </ul>
 </body>
 </html>
