@@ -32,21 +32,20 @@ def results(artist):
             song_obj = genius.search_song(song_title, artist)
             if song_obj:
                 song_lyrics[song_title] = random.choice(song_obj.lyrics.lyrics.split('\n'))
-                song_lyrics[song_title] = random_lyric
             else:
                  song_lyrics[song_title] = "Lyrics not found"
         return render_template('results.html', artist=artist, song_lyrics=song_lyrics)
 
     
 
-def get_artist_songs_by_pop(artist_name, max_songs=None):
+def get_artist_songs_by_pop(artist_name, max_songs=2):#change max song to none later only at 2 for test speed
     try:
         artist = genius.search_artist(artist_name, max_songs=max_songs)
         if artist:
             songs = []
             page = 1
             while page:
-                request = genius.artist_songs(artist.id, sort='popularity', per_page=50, page=page)#ser to low numer change per page to higher 50 when not trsting
+                request = genius.artist_songs(artist.id, sort='popularity', per_page=50, page=page)
                 if 'next_page' not in request or len(request['songs']) == 0:
                     break
                 songs.extend(request['songs'])
