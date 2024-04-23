@@ -43,7 +43,7 @@ def results(artist):
             return 'Sorted songs not found'
     
 
-def get_artist_songs_by_pop(artist_name, max_songs=None):#change max song to none later only at 2 for test speed
+def get_artist_songs_by_pop(artist_name, max_songs=None):#change max song to none later 2 for test speed
     try:
         artist = genius.search_artist(artist_name, max_songs=max_songs)
         if artist:
