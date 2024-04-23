@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template, redirect, url_for
 from lyricsgenius import Genius
 import random
+import json
 
 app = Flask(__name__)
 genius = Genius('WgL88zDw74vN0BHApKBu4Mfoz_EObXEFHKgxUlfdIhUcgZFvp5Vi7RcL0hs8J3rL', timeout=10)
@@ -17,25 +18,29 @@ def search():
     if artist_name:
         sorted_songs = get_artist_songs_by_pop(artist_name)
         if sorted_songs:
-            song_titles = [song['title'] for song in sorted_songs]
             # Return URL of results page
-            return redirect(url_for('results', artist=artist_name))
+            sorted_songs_json = json.dumps(sorted_songs)
+            return redirect(url_for('results', artist=artist_name, sorted_songs=json.dumps(sorted_songs)))
     return 'No Songs Found for artist'
     
 
 
 @app.route('/results/<artist>')
 def results(artist):
-        song_lyrics = {}
-        for song in sorted_songs:
-            song_title = song['title']
-            song_obj = genius.search_song(song_title, artist)
-            if song_obj:
-                song_lyrics[song_title] = random.choice(song_obj.lyrics.lyrics.split('\n'))
-            else:
-                 song_lyrics[song_title] = "Lyrics not found"
-        return render_template('results.html', artist=artist, song_lyrics=song_lyrics)
-
+        sorted_songs_json = request.args.get('sorted_songs')
+        if sorted_songs_json:
+            sorted_songs = json.loads(sorted_songs_json)
+            song_lyrics = {}
+            for song in sorted_songs:
+                song_title = song.get('title')
+                song_obj = genius.search_song(song_title, artist)
+                if song_obj:
+                    song_lyrics[song_title] = random.choice(song_obj.lyrics.split('\n')) 
+                else:
+                    song_lyrics[song_title] = "Lyrics not found"
+            return render_template('results.html', artist=artist, song_lyrics=song_lyrics)
+        else:
+            return 'Sorted songs not found'
     
 
 def get_artist_songs_by_pop(artist_name, max_songs=2):#change max song to none later only at 2 for test speed
