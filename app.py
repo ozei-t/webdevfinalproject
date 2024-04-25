@@ -12,39 +12,36 @@ sorted_songs = []
 def index():
     return render_template('index.html')
 
-@app.route('/search', methods=['POST'])
+@app.route('/search', methods=['GET'])
 def search():
-    artist_name = request.form.get('artist')
+    artist_name = request.args.get('artist')
     if artist_name:
         sorted_songs = get_artist_songs_by_pop(artist_name)
         if sorted_songs:
             # Return URL of results page
+            sorted_songs_json = json.dumps(sorted_songs)
+            return redirect(url_for('results', artist=artist_name, sorted_songs=json.dumps(sorted_songs)))
+    return 'No Songs Found for artist'
+    
+
+
+@app.route('/results/<artist>')
+def results(artist):
+        sorted_songs_json = request.args.get('sorted_songs')
+        if sorted_songs_json:
+            sorted_songs = json.loads(sorted_songs_json)
             song_lyrics = {}
             for song in sorted_songs:
                 song_title = song.get('title')
-                song_obj = genius.search_song(song_title, artist_name)
+                song_obj = genius.search_song(song_title, artist)
                 if song_obj:
                     song_lyrics[song_title] = random.choice(song_obj.lyrics.split('\n')) 
                 else:
                     song_lyrics[song_title] = "Lyrics not found"
-            return render_template('results.html', artist=artist_name, song_lyrics=song_lyrics)
-    return 'No Songs Found for artist'
-    
-@app.route('/check_lyric/<artist>', methods=['POST'])
-def check_lyric(artist):
-    submitted_song = request.form.get('guessedSong')
-    actual_lyric = request.form.get('actualLyric')
-    actual_song = request.form.get('actualSong')
-
-    if submitted_song and actual_song:
-        if submitted_song.lower() == actual_song.lower():
-            return "Correct! The guessed song is correct."
+            return render_template('results.html', artist=artist, song_lyrics=song_lyrics)
         else:
-            return "Incorrect! The guessed song is incorrect. The actual song is: " + actual_song
-    else:
-        return "Skipping. Missing data. Please provide a guessed song."
-
-  
+            return 'Sorted songs not found'
+    
 
 def get_artist_songs_by_pop(artist_name, max_songs=None):#change max song to none later 2 for test speed
     try:
