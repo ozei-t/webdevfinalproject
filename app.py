@@ -30,25 +30,26 @@ def search():
             return render_template('results.html', artist=artist_name, song_lyrics=song_lyrics)
     return 'No Songs Found for artist'
     
-
-
-@app.route('/results/<artist>', methods = ['POST'])
-def results(artist):
-        sorted_songs_json = request.form.get('sorted_songs')
-        if sorted_songs_json:
-            sorted_songs = json.loads(sorted_songs_json)
-            song_lyrics = {}
-            for song in sorted_songs:
-                song_title = song.get('title')
-                song_obj = genius.search_song(song_title, artist)
-                if song_obj:
-                    song_lyrics[song_title] = random.choice(song_obj.lyrics.split('\n')) 
-                else:
-                    song_lyrics[song_title] = "Lyrics not found"
-            return render_template('results.html', artist=artist, song_lyrics=song_lyrics)
-        else:
-            return 'Sorted songs not found'
+@app.route('/check_lyric/<artist>', methods=['POST'])
+def check_lyric(artist):
+    submitted_lyric = request.form.get('lyricInput')
+    song_title = request.form.get('songTitle')
     
+    if submitted_lyric and song_title:
+        song_obj = genius.search_song(song_title, artist)
+        if song_obj:
+            actual_lyrics = song_obj.lyrics.lower()
+            submitted_lyric = submitted_lyric.lower()
+            if submitted_lyric in actual_lyrics:
+                return "Correct! The submitted lyric matches the song's lyric."
+            else:
+                return "Incorrect! The submitted lyric does not match the song's lyric."
+        else:
+            return "Song not found."
+    else:
+        return "Skipping song. Missing data. Please provide both the lyric and the song title."
+
+  
 
 def get_artist_songs_by_pop(artist_name, max_songs=None):#change max song to none later 2 for test speed
     try:
