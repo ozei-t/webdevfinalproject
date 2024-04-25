@@ -12,22 +12,29 @@ sorted_songs = []
 def index():
     return render_template('index.html')
 
-@app.route('/search', methods=['GET'])
+@app.route('/search', methods=['POST'])
 def search():
-    artist_name = request.args.get('artist')
+    artist_name = request.form.get('artist')
     if artist_name:
         sorted_songs = get_artist_songs_by_pop(artist_name)
         if sorted_songs:
             # Return URL of results page
-            sorted_songs_json = json.dumps(sorted_songs)
-            return redirect(url_for('results', artist=artist_name, sorted_songs=json.dumps(sorted_songs)))
+            song_lyrics = {}
+            for song in sorted_songs:
+                song_title = song.get('title')
+                song_obj = genius.search_song(song_title, artist_name)
+                if song_obj:
+                    song_lyrics[song_title] = random.choice(song_obj.lyrics.split('\n')) 
+                else:
+                    song_lyrics[song_title] = "Lyrics not found"
+            return render_template('results.html', artist=artist_name, song_lyrics=song_lyrics)
     return 'No Songs Found for artist'
     
 
 
-@app.route('/results/<artist>')
+@app.route('/results/<artist>', methods = ['POST'])
 def results(artist):
-        sorted_songs_json = request.args.get('sorted_songs')
+        sorted_songs_json = request.form.get('sorted_songs')
         if sorted_songs_json:
             sorted_songs = json.loads(sorted_songs_json)
             song_lyrics = {}

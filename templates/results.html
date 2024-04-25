@@ -3,35 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guess the Song</title>
-    <style>
-        .timer {
-            font-size: 18px;
-            color: blue;
-            margin-bottom: 10px;
-        }
-    </style>
+    <title>Song Quiz Results</title>
 </head>
 <body>
-<h1>Guess {{ artist }}'s Song</h1>
-<p class="timer" id="timer">Time elapsed: 0 seconds</p>
-<p>{{ song_lyric }}</p>
-<form id="songForm" action="{{ url_for('check_lyric', artist=artist) }}" method="post">
-    <label for="guessedSong">Enter your guess for the song:</label><br>
-    <input type="text" id="guessedSong" name="guessedSong" required><br>
-    <input type="hidden" name="actualSong" value="{{ actual_song }}">
-    <button type="submit">Submit</button>
-</form>
-{% if message %}
-    <p>{{ message }}</p>
-{% endif %}
-<script>
-    var startTime = new Date().getTime();
-    setInterval(function() {
-        var currentTime = new Date().getTime();
-        var elapsedTime = (currentTime - startTime) / 1000;
-        document.getElementById("timer").innerHTML = "Time elapsed: " + elapsedTime.toFixed(1) + " seconds";
-    }, 100);
-</script>
+<h1>Songs by {{ artist }}</h1>
+<ul>
+    {% for song, lyric in song_lyrics.items() %}
+        <li><strong>{{ song }}</strong>: {{ lyric }}</li>
+    {% endfor %}
+</ul>
 </body>
 </html>
