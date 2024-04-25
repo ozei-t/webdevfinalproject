@@ -32,22 +32,17 @@ def search():
     
 @app.route('/check_lyric/<artist>', methods=['POST'])
 def check_lyric(artist):
-    submitted_lyric = request.form.get('lyricInput')
-    song_title = request.form.get('songTitle')
-    
-    if submitted_lyric and song_title:
-        song_obj = genius.search_song(song_title, artist)
-        if song_obj:
-            actual_lyrics = song_obj.lyrics.lower()
-            submitted_lyric = submitted_lyric.lower()
-            if submitted_lyric in actual_lyrics:
-                return "Correct! The submitted lyric matches the song's lyric."
-            else:
-                return "Incorrect! The submitted lyric does not match the song's lyric."
+    submitted_song = request.form.get('guessedSong')
+    actual_lyric = request.form.get('actualLyric')
+    actual_song = request.form.get('actualSong')
+
+    if submitted_song and actual_song:
+        if submitted_song.lower() == actual_song.lower():
+            return "Correct! The guessed song is correct."
         else:
-            return "Song not found."
+            return "Incorrect! The guessed song is incorrect. The actual song is: " + actual_song
     else:
-        return "Skipping song. Missing data. Please provide both the lyric and the song title."
+        return "Skipping. Missing data. Please provide a guessed song."
 
   
 

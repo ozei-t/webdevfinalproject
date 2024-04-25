@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guess Song Lyrics</title>
+    <title>Guess the Song</title>
     <style>
         .timer {
             font-size: 18px;
@@ -13,11 +13,13 @@
     </style>
 </head>
 <body>
-<h1>Guess {{ artist }}'s Song Lyrics</h1>
+<h1>Guess {{ artist }}'s Song</h1>
 <p class="timer" id="timer">Time elapsed: 0 seconds</p>
+<p>{{ song_lyric }}</p>
 <form id="songForm" action="{{ url_for('check_lyric', artist=artist) }}" method="post">
-    <label for="lyricInput">Enter the lyrics of the song:</label><br>
-    <input type="text" id="lyricInput" name="lyricInput" required><br>
+    <label for="guessedSong">Enter your guess for the song:</label><br>
+    <input type="text" id="guessedSong" name="guessedSong" required><br>
+    <input type="hidden" name="actualSong" value="{{ actual_song }}">
     <button type="submit">Submit</button>
 </form>
 {% if message %}
