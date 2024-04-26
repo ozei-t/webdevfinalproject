@@ -4,56 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Song Quiz Results</title>
-    <style>
-        .timer {
-            font-size: 18px;
-        }
-    </style>
 </head>
 <body>
 <h1>Songs by {{ artist }}</h1>
-<p class="timer" id="timer">Time elapsed: 0 seconds</p>
-<!-- <ul>
+<ul>
     {% for song, lyric in song_lyrics.items() %}
         <li><strong>{{ song }}</strong>: {{ lyric }}</li>
     {% endfor %}
-</ul> -->
-<p id="placehold"></p>
-<form id="songForm">
-    <label for="guessedSong">Enter your guess for the song:</label><br>
-    <input type="text" id="guessedSong" name="guessedSong" required><br>
-    <button type="submit">Submit</button>
-</form>
+</ul>
+</body>
+
 <script>
     let songs = [];
+    let tmp = [];
     {% for song, lyric in song_lyrics.items() %}
-        songs["{{ song }}"] = "{{ lyric }}";
+    tmp = [];
+    tmp.push("{{ lyric }}");
+    songs["{{ song }}"] = tmp;
     {% endfor %}
-
-    let x = 0;
-    let songKeys = Object.keys(songs);
-    let placeholdlyric = songs[songKeys[x]];
-    document.getElementById("placehold").innerHTML = placeholdlyric;
-
-    document.getElementById("songForm").addEventListener("submit", function(event) {
-        event.preventDefault();
-        let guessedSong = document.getElementById("guessedSong").value;
-        let correctSong = songKeys[x];
-        if (guessedSong.toLowerCase() === correctSong.toLowerCase()) {
-            alert("Correct!");
-            x++;
-            if (x < songKeys.length) {
-                placeholdlyric = songs[songKeys[x]];
-                document.getElementById("placehold").innerHTML = placeholdlyric;
-            } else {
-                alert("All songs guessed!");
-                // You can add further actions here when all songs are guessed
-            }
-        } else {
-            alert("Incorrect, try again!");
-        }
-        document.getElementById("guessedSong").value = "";
-    });
 </script>
-</body>
 </html>
