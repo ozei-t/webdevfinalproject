@@ -39,7 +39,9 @@
         event.preventDefault();
         let guessedSong = document.getElementById("guessedSong").value;
         let correctSong = songKeys[x];
-        if (guessedSong.toLowerCase() === correctSong.toLowerCase()) {
+        console.log("guess: ",guessedSong.toLowerCase().trim(), "correct song ", correctSong.toLowerCase().trim() )
+        console.log("GUESS: ", typeof(guessedSong), "correct song", typeof(correctSong) )
+        if (guessedSong.toLowerCase().trim() === correctSong.toLowerCase().trim()) {
             alert("Correct!");
             x++;
             if (x < songKeys.length) {
