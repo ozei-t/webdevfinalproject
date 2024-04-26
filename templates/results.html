@@ -13,4 +13,14 @@
     {% endfor %}
 </ul>
 </body>
+
+<script>
+    let songs = [];
+    let tmp = [];
+    {% for song, lyric in song_lyrics.items() %}
+    tmp = [];
+    tmp.push("{{ lyric }}");
+    songs["{{ song }}"] = tmp;
+    {% endfor %}
+</script>
 </html>
