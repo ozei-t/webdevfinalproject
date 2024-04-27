@@ -16,7 +16,7 @@ def index():
 def search():
     artist_name = request.form.get('artist')
     if artist_name:
-        sorted_songs = get_artist_songs_by_pop(artist_name, 10)
+        sorted_songs = get_artist_songs_by_pop(artist_name, 2)
         if sorted_songs:
             # Return URL of results page
             song_lyrics = {}
