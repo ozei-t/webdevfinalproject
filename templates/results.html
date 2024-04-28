@@ -29,12 +29,33 @@
     {% for song, lyric in song_lyrics.items() %}
         songs["{{ song }}"] = "{{ lyric }}";
     {% endfor %}
-    
 
     let x = 0;
     let songKeys = Object.keys(songs);
     let placeholdlyric = songs[songKeys[x]];
     document.getElementById("placehold").innerHTML = placeholdlyric;
+
+    // Timer
+    let startTime;
+    let timerInterval;
+
+    function startTimer() {
+        startTime = new Date();
+        timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    function stopTimer() {
+        clearInterval(timerInterval);
+    }
+
+    function updateTimer() {
+        let currentTime = new Date();
+        let elapsedTime = Math.floor((currentTime - startTime) / 1000); // in seconds
+        document.getElementById("timer").innerHTML = "Time elapsed: " + elapsedTime + " seconds";
+    }
+
+    
+    window.onload = startTimer;
 
     document.getElementById("songForm").addEventListener("submit", function(event) {
         event.preventDefault();
@@ -42,12 +63,14 @@
         let correctSong = songKeys[x];
         console.log("guess: ", guessedSong.toLowerCase().trim(), "correct: ", correctSong.toLowerCase().trim())
         console.log("GUESS: ", typeof(guessedSong), "Correct: ", typeof(correctSong))
-        if (guessedSong.toLowerCase().trim() === correctSong.toLowerCase()) {
+        if (guessedSong.toLowerCase().trim() === correctSong.toLowerCase().trim()) {
             alert("Correct!");
+            stopTimer(); 
             x++;
             if (x < songKeys.length) {
                 placeholdlyric = songs[songKeys[x]];
                 document.getElementById("placehold").innerHTML = placeholdlyric;
+                startTimer(); 
             } else {
                 alert("All songs guessed!");
                 // You can add further actions here when all songs are guessed
