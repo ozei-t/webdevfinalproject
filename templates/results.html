@@ -5,9 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Song Quiz Results</title>
     <style>
-        .timer {
-            font-size: 18px;
-        }
+       body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex; /* Maintain flexbox for centering */
+      flex-direction: column; /* Stack elements vertically */
+      justify-content: center; /* Center elements vertically within the viewport */
+      align-items: center; /* Center elements horizontally within the viewport */
+      height: 100vh;
+      background-color: #f2f2f2;
+    }
+
+    .timer {
+      font-size: 18px;
+    }
     </style>
 </head>
 <body>
@@ -24,6 +36,7 @@
     <input type="text" id="guessedSong" name="guessedSong" required><br>
     <button type="submit">Submit</button>
 </form>
+  <button id="skipButton">Skip Song</button>
 <script>
     let songs = {};
     {% for song, lyric in song_lyrics.items() %}
@@ -41,7 +54,7 @@
 
     function startTimer() {
         startTime = new Date();
-        timerInterval = setInterval(updateTimer, 1000);
+        timerInterval = setInterval(updateTimer, 100);
     }
 
     function stopTimer() {
@@ -50,7 +63,7 @@
 
     function updateTimer() {
         let currentTime = new Date();
-        let elapsedTime = Math.floor((currentTime - startTime) / 1000); // in seconds
+        let elapsedTime = Math.floor((currentTime - startTime) / 100)/10; // in seconds
         document.getElementById("timer").innerHTML = "Time elapsed: " + elapsedTime + " seconds";
     }
 
@@ -87,6 +100,16 @@
             alert("Incorrect, try again!");
         }
         document.getElementById("guessedSong").value = "";
+    });
+    document.getElementById("skipButton").addEventListener("click", function() {
+        if (x < songKeys.length - 1) { // Check if there's a next song
+            x++;
+            placeholdlyric = songs[songKeys[x]];
+            document.getElementById("placehold").innerHTML = placeholdlyric;
+            startTimer();
+        } else {
+            alert("No more songs to skip!");
+        }
     });
 </script>
 </body>
