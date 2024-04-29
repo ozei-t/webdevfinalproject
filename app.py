@@ -2,6 +2,7 @@ from flask import Flask, request, render_template, redirect, url_for
 from lyricsgenius import Genius
 import random
 import json
+import re
 
 app = Flask(__name__)
 genius = Genius('WgL88zDw74vN0BHApKBu4Mfoz_EObXEFHKgxUlfdIhUcgZFvp5Vi7RcL0hs8J3rL', timeout=10)
@@ -42,7 +43,12 @@ def results(artist):
                 song_title = song.get('title')
                 song_obj = genius.search_song(song_title, artist, get_full_info=False)
                 if song_obj:
-                    song_lyrics[song_title] = random.choice(song_obj.lyrics.split('\n')) 
+                    lyrics_lines = song_obj.lyrics.split('\n')
+                    chosen_line = random.choice(lyrics_lines)
+                    # Check if the chosen line becomes empty after stripping all whitespace characters
+                    while not re.sub(r'\s+', '', chosen_line):
+                        chosen_line = random.choice(lyrics_lines)
+                    song_lyrics[song_title] = chosen_line
                 else:
                     song_lyrics[song_title] = "Lyrics not found"
             return render_template('results.html', artist=artist, song_lyrics=song_lyrics)

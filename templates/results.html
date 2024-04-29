@@ -122,7 +122,8 @@
         //     console.log(e.charCodeAt(0));
         // }
         if (guessedSong === correctSong) {
-            alert("Correct!");
+            let elapsedTime = document.getElementById("timer").textContent.replace("Time elapsed: ", "");
+            alert("Correct! You took " + elapsedTime + " seconds.");
             incrementCurrentSong();
             if (x < songKeys.length) {
                 placeholdlyric = currentSong;
