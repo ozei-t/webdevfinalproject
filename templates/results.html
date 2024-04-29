@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Song Quiz Results</title>
     <style>
-       body {
+    body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
@@ -30,15 +30,15 @@
 <body>
     <h1>Songs by {{ artist }}</h1>
     <p class="timer" id="timer">Time elapsed: 0 seconds</p>
-    <p id="currentSong" class="hide">Current Song: <span id="songNumber">0</span></p>
+    <p id="currentSong" class="hide">Current Song: <span id="songNumber"></span></p>
     
     <!-- <ul>
         {% for song, lyric in song_lyrics.items() %}
             <li><strong>{{ song }}</strong>: {{ lyric }}</li>
         {% endfor %}
     </ul> -->
-    <p id="placehold"></p>
-    <form id="songForm">
+    <p id="placehold" class="hide"></p>
+    <form id="songForm" class="hide">
         <label for="guessedSong">Enter your guess for the song:</label><br>
         <input type="text" id="guessedSong" name="guessedSong" required><br>
         <button type="submit">Submit</button>
@@ -67,6 +67,7 @@
         document.getElementById("currentSong").classList.remove("hide");
         document.getElementById("placehold").classList.remove("hide");
         document.getElementById("songForm").classList.remove("hide");
+        document.getElementById("showLyricButton").style.display = "none";
         if (!timerStarted) {
           startTimer(); // Start the timer only on first click
           timerStarted = true;
@@ -99,13 +100,13 @@
         document.getElementById("timer").innerHTML = "Time elapsed: 0 seconds";
     }
     function incrementCurrentSong() {
-    x++;
-    document.getElementById("songNumber").textContent = x + 1;
-    document.getElementById("showLyricButton").classList.remove("hide");
-    document.getElementById("placehold").innerHTML = "Your lyrics will be here"; // Reset placeholder message 
-    document.getElementById("songNumber").textContent = x + 1;
-      document.getElementById("placehold").classList.add("hide");
-      document.getElementById("songForm").classList.add("hide");
+        x++;
+        resetTimer(); 
+        document.getElementById("songNumber").textContent = x + 1;
+        document.getElementById("placehold").innerHTML = "Your lyrics will be here"; // Reset placeholder message 
+        document.getElementById("placehold").classList.add("hide");
+        document.getElementById("songForm").classList.add("hide");
+        document.getElementById("showLyricButton").style.display = "flex";
     }
 
     document.getElementById("songForm").addEventListener("submit", function(event) {
@@ -114,7 +115,7 @@
         let guessedSong = document.getElementById("guessedSong").value.toLowerCase().trim();
         let correctSong = songKeys[x].toLowerCase().trim().replace(re, '');
         console.log("guess")
-        for (e of guessedSong.split('')) {
+        for (e of guessedSong.desplit('')) {
             console.log(e.charCodeAt(0));
         }
 
@@ -124,9 +125,7 @@
         }
         if (guessedSong === correctSong) {
             alert("Correct!");
-            resetTimer(); 
             incrementCurrentSong();
-            x++;
             if (x < songKeys.length) {
                 placeholdlyric = currentSong;
                 document.getElementById("placehold").innerHTML = placeholdlyric;
@@ -141,10 +140,8 @@
         document.getElementById("guessedSong").value = "";
     });
     document.getElementById("skipButton").addEventListener("click", function() {
-        if (x < songKeys.length - 1) { // Check if there's a next song
-            resetTimer();  
+        if (x < songKeys.length - 1) { // Check if there's a next song 
             incrementCurrentSong();  
-            x++;
             placeholdlyric = currentSong;
             document.getElementById("placehold").innerHTML = placeholdlyric;
             clearInterval(timerInterval); 
