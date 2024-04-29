@@ -52,7 +52,9 @@
     let songs = {};
     let scores = [];
     {% for song, lyric in song_lyrics.items() %}
-        songs["{{ song }}"] = "{{ lyric }}";
+        {% if loop.index <= 10 %}
+            songs["{{ song }}"] = "{{ lyric }}";
+        {% endif %}
     {% endfor %}
 
     let x = 0;
@@ -129,8 +131,8 @@
         //     console.log(e.charCodeAt(0));
         // }
         if (guessedSong === correctSong) {
-            let elapsedTimeString = document.getElementById("timer").textContent.replace("Time elapsed: ", "");
-            let elapsedTime = parseInt(elapsedTimeString);
+            let currentTime = new Date();
+            let elapsedTime = Math.floor((currentTime - startTime) / 100)/10;
             if (isNaN(elapsedTime)) {
                 // Handle case where elapsedTimeString is not a valid number
                 console.error("Invalid elapsed time:", elapsedTimeString);
@@ -140,7 +142,7 @@
         document.getElementById("nextSongButton").style.display = "flex"; // Show the button
         document.getElementById("skipButton").style.display = "none"; // Hide the skip button
         stopTimer(); // Stop the timer
-        let score = Math.max(60 - elapsedTimeInSeconds, 0); // Calculate the score for the song
+        let score = Math.max(60 - elapsedTime, 0); // Calculate the score for the song
         scores.push(score);
         console.log("Scores array:", scores);
         if (x < songKeys.length) {
