@@ -20,23 +20,31 @@
     .timer {
       font-size: 18px;
     }
+    
+    #placehold,
+    #songForm {
+      display: none; /* Initially hide all these elements */
+    }
     </style>
 </head>
 <body>
-<h1>Songs by {{ artist }}</h1>
-<p class="timer" id="timer">Time elapsed: 0 seconds</p>
-<!-- <ul>
-    {% for song, lyric in song_lyrics.items() %}
-        <li><strong>{{ song }}</strong>: {{ lyric }}</li>
-    {% endfor %}
-</ul> -->
-<p id="placehold"></p>
-<form id="songForm">
-    <label for="guessedSong">Enter your guess for the song:</label><br>
-    <input type="text" id="guessedSong" name="guessedSong" required><br>
-    <button type="submit">Submit</button>
-</form>
-  <button id="skipButton">Skip Song</button>
+    <h1>Songs by {{ artist }}</h1>
+    <p class="timer" id="timer">Time elapsed: 0 seconds</p>
+    <p id="currentSong" class="hide">Current Song: <span id="songNumber">0</span></p>
+    
+    <!-- <ul>
+        {% for song, lyric in song_lyrics.items() %}
+            <li><strong>{{ song }}</strong>: {{ lyric }}</li>
+        {% endfor %}
+    </ul> -->
+    <p id="placehold"></p>
+    <form id="songForm">
+        <label for="guessedSong">Enter your guess for the song:</label><br>
+        <input type="text" id="guessedSong" name="guessedSong" required><br>
+        <button type="submit">Submit</button>
+    </form>
+    <button id="showLyricButton">Show Lyric</button>
+    <button id="skipButton">Skip Song</button>
 <script>
     let songs = {};
     {% for song, lyric in song_lyrics.items() %}
@@ -45,12 +53,32 @@
 
     let x = 0;
     let songKeys = Object.keys(songs);
-    let placeholdlyric = songs[songKeys[x]];
-    document.getElementById("placehold").innerHTML = placeholdlyric;
+    let currentSong;
+    currentSong = '"' + songs[songKeys[x]] + '"';
+    let placeholdlyric = currentSong  ;
+    let timerStarted = false;
+    document.getElementById("songNumber").textContent = x + 1;
 
+    document.getElementById("showLyricButton").addEventListener("click", function() {
+      if (x < songKeys.length) {
+        currentSong = '"' + songs[songKeys[x]] + '"'; // Update currentSong on button click
+        placeholdlyric = currentSong;
+        document.getElementById("placehold").innerHTML = placeholdlyric;
+        document.getElementById("currentSong").classList.remove("hide");
+        document.getElementById("placehold").classList.remove("hide");
+        document.getElementById("songForm").classList.remove("hide");
+        if (!timerStarted) {
+          startTimer(); // Start the timer only on first click
+          timerStarted = true;
+        }
+      } else {
+        alert("All songs guessed!");
+      }
+    });
     // Timer
     let startTime;
     let timerInterval;
+
 
     function startTimer() {
         startTime = new Date();
@@ -66,9 +94,19 @@
         let elapsedTime = Math.floor((currentTime - startTime) / 100)/10; // in seconds
         document.getElementById("timer").innerHTML = "Time elapsed: " + elapsedTime + " seconds";
     }
-
-    
-    window.onload = startTimer;
+    function resetTimer() {
+        stopTimer();
+        document.getElementById("timer").innerHTML = "Time elapsed: 0 seconds";
+    }
+    function incrementCurrentSong() {
+    x++;
+    document.getElementById("songNumber").textContent = x + 1;
+    document.getElementById("showLyricButton").classList.remove("hide");
+    document.getElementById("placehold").innerHTML = "Your lyrics will be here"; // Reset placeholder message 
+    document.getElementById("songNumber").textContent = x + 1;
+      document.getElementById("placehold").classList.add("hide");
+      document.getElementById("songForm").classList.add("hide");
+    }
 
     document.getElementById("songForm").addEventListener("submit", function(event) {
         event.preventDefault();
@@ -86,12 +124,13 @@
         }
         if (guessedSong === correctSong) {
             alert("Correct!");
-            stopTimer(); 
+            resetTimer(); 
+            incrementCurrentSong();
             x++;
             if (x < songKeys.length) {
-                placeholdlyric = songs[songKeys[x]];
+                placeholdlyric = currentSong;
                 document.getElementById("placehold").innerHTML = placeholdlyric;
-                startTimer(); 
+                
             } else {
                 alert("All songs guessed!");
                 // You can add further actions here when all songs are guessed
@@ -103,10 +142,12 @@
     });
     document.getElementById("skipButton").addEventListener("click", function() {
         if (x < songKeys.length - 1) { // Check if there's a next song
+            resetTimer();  
+            incrementCurrentSong();  
             x++;
-            placeholdlyric = songs[songKeys[x]];
+            placeholdlyric = currentSong;
             document.getElementById("placehold").innerHTML = placeholdlyric;
-            startTimer();
+            clearInterval(timerInterval); 
         } else {
             alert("No more songs to skip!");
         }
