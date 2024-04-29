@@ -167,6 +167,7 @@ document.getElementById("skipButton").addEventListener("click", function() {
         clearInterval(timerInterval); 
     } else {
         alert("No more songs to skip!");
+        calculateTotalScore();
     }
 });
 
@@ -179,8 +180,16 @@ document.getElementById("nextSongButton").addEventListener("click", function() {
         clearInterval(timerInterval); 
     } else {
         alert("No more songs to play!");
+        calculateTotalScore();
     }
 });
+function calculateTotalScore() {
+
+  console.log("Scores array:", scores);
+  let totalScore = scores.reduce((acc, cur) => acc + cur, 0); // Directly add all scores
+  let totalScoreFormatted = `${totalScore} seconds`; // Format as seconds
+  alert("Total Score: " + totalScoreFormatted);
+}
 
 </script>
 </body>
