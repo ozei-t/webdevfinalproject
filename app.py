@@ -3,9 +3,18 @@ from lyricsgenius import Genius
 import random
 import json
 import re
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 genius = Genius('WgL88zDw74vN0BHApKBu4Mfoz_EObXEFHKgxUlfdIhUcgZFvp5Vi7RcL0hs8J3rL', timeout=10)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db' 
+db = SQLAlchemy(app)
+
+class User(db.Model): 
+    score = db.Column(db.Integer, primary_key=True) 
+    name = db.Column(db.String(20), unique=True, nullable=False)
+
+with app.app_context(): db.create_all()
 
 sorted_songs = []
 
