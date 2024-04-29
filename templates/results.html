@@ -45,6 +45,9 @@
     </form>
     <button id="showLyricButton">Show Lyric</button>
     <button id="skipButton">Skip Song</button>
+    <p id="incorrectMessage" ></p>
+    <button id="nextSongButton" class="hide">Next Song</button>
+
 <script>
     let songs = {};
     {% for song, lyric in song_lyrics.items() %}
@@ -58,6 +61,7 @@
     let placeholdlyric = currentSong  ;
     let timerStarted = false;
     document.getElementById("songNumber").textContent = x + 1;
+    document.getElementById("nextSongButton").style.display="none";
 
     document.getElementById("showLyricButton").addEventListener("click", function() {
       if (x < songKeys.length) {
@@ -105,6 +109,8 @@
         document.getElementById("placehold").style.display="none";
         document.getElementById("songForm").style.display="none";
         document.getElementById("showLyricButton").style.display = "flex";
+        document.getElementById("incorrectMessage").style.display="none";
+        document.getElementById("skipButton").style.display="flex";
     }
 
     document.getElementById("songForm").addEventListener("submit", function(event) {
@@ -122,32 +128,49 @@
         //     console.log(e.charCodeAt(0));
         // }
         if (guessedSong === correctSong) {
-            let elapsedTime = document.getElementById("timer").textContent.replace("Time elapsed: ", "");
-            alert("Correct! You took " + elapsedTime + " seconds.");
-            incrementCurrentSong();
-            if (x < songKeys.length) {
-                placeholdlyric = currentSong;
-                document.getElementById("placehold").innerHTML = placeholdlyric;
-                
-            } else {
-                alert("All songs guessed!");
-                // You can add further actions here when all songs are guessed
-            }
-        } else {
-            alert("Incorrect, try again!");
-        }
-        document.getElementById("guessedSong").value = "";
-    });
-    document.getElementById("skipButton").addEventListener("click", function() {
-        if (x < songKeys.length - 1) { // Check if there's a next song 
-            incrementCurrentSong();  
+        let elapsedTime = document.getElementById("timer").textContent.replace("Time elapsed: ", "");
+        document.getElementById("incorrectMessage").style.display = "flex"
+        document.getElementById("incorrectMessage").innerHTML = "<span style='color: green;'>Correct!</span> You took " + elapsedTime + " seconds.";
+        document.getElementById("nextSongButton").style.display = "flex"; // Show the button
+        document.getElementById("skipButton").style.display = "none"; // Hide the skip button
+        stopTimer(); // Stop the timer
+        if (x < songKeys.length) {
             placeholdlyric = currentSong;
             document.getElementById("placehold").innerHTML = placeholdlyric;
-            clearInterval(timerInterval); 
         } else {
-            alert("No more songs to skip!");
+            alert("All songs guessed!");
+            // You can add further actions here when all songs are guessed
         }
-    });
+    } else {
+        document.getElementById("incorrectMessage").style.display = "flex"
+        document.getElementById("incorrectMessage").innerHTML = "<span style='color: red;'>Incorrect, try again!</span>";
+    }
+    document.getElementById("guessedSong").value = "";
+});
+
+document.getElementById("skipButton").addEventListener("click", function() {
+    if (x < songKeys.length - 1) { // Check if there's a next song 
+        incrementCurrentSong();  
+        placeholdlyric = currentSong;
+        document.getElementById("placehold").innerHTML = placeholdlyric;
+        clearInterval(timerInterval); 
+    } else {
+        alert("No more songs to skip!");
+    }
+});
+
+document.getElementById("nextSongButton").addEventListener("click", function() {
+    if (x < songKeys.length) {
+        incrementCurrentSong();  
+        placeholdlyric = currentSong;
+        document.getElementById("placehold").innerHTML = placeholdlyric;
+        document.getElementById("nextSongButton").style.display = "none"; // Hide the button again
+        clearInterval(timerInterval); 
+    } else {
+        alert("No more songs to play!");
+    }
+});
+
 </script>
 </body>
 </html>
