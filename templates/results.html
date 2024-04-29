@@ -65,13 +65,11 @@
         placeholdlyric = currentSong;
         document.getElementById("placehold").innerHTML = placeholdlyric;
         document.getElementById("currentSong").classList.remove("hide");
-        document.getElementById("placehold").classList.remove("hide");
-        document.getElementById("songForm").classList.remove("hide");
+        document.getElementById("placehold").style.display="flex";
+        document.getElementById("songForm").style.display="flex";
         document.getElementById("showLyricButton").style.display = "none";
-        if (!timerStarted) {
           startTimer(); // Start the timer only on first click
-          timerStarted = true;
-        }
+       
       } else {
         alert("All songs guessed!");
       }
@@ -104,8 +102,8 @@
         resetTimer(); 
         document.getElementById("songNumber").textContent = x + 1;
         document.getElementById("placehold").innerHTML = "Your lyrics will be here"; // Reset placeholder message 
-        document.getElementById("placehold").classList.add("hide");
-        document.getElementById("songForm").classList.add("hide");
+        document.getElementById("placehold").style.display="none";
+        document.getElementById("songForm").style.display="none";
         document.getElementById("showLyricButton").style.display = "flex";
     }
 
