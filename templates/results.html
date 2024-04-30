@@ -139,7 +139,9 @@
         event.preventDefault();
         var re = new RegExp("\u2028|\u2029|\u200B");
         let guessedSong = document.getElementById("guessedSong").value.toLowerCase().trim();
-        let correctSong = songKeys[x].toLowerCase().trim().replace(re, "");
+        //let correctSong = songKeys[x].toLowerCase().trim().replace(re, "");
+        let correctSong = songKeys[x].toLowerCase().trim().replace(/\u2028|\u2029|\u200B/g, "");
+
         console.log("guess")
         for (e of guessedSong.split('')) {
             console.log(e.charCodeAt(0));
