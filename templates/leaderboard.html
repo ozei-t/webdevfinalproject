@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard</title>
+</head>
+<body>
+    <h1>Leaderboard</h1>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Total Score</th>
+        </tr>
+        {% for score in scores %}
+        <tr>
+            <td>{{ score.name }}</td>
+            <td>{{ score.total_score }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

@@ -10,9 +10,10 @@ genius = Genius('WgL88zDw74vN0BHApKBu4Mfoz_EObXEFHKgxUlfdIhUcgZFvp5Vi7RcL0hs8J3r
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db' 
 db = SQLAlchemy(app)
 
-class User(db.Model): 
-    score = db.Column(db.Integer, primary_key=True) 
-    name = db.Column(db.String(20), unique=True, nullable=False)
+class Score(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    total_score = db.Column(db.Integer, nullable=False)
 
 with app.app_context(): db.create_all()
 
@@ -84,6 +85,23 @@ def get_artist_songs_by_pop(artist_name, max_songs=None):#change max song to non
     except Exception as e:
         print(f"An error occurred while fetching songs: {e}")
         return None
+
+@app.route('/submit-score', methods=['POST'])
+def submit_score():
+    name = request.form.get('playerName')
+    total_score = int(request.form.get('totalScore'))
+
+    new_score = Score(name=name, total_score=total_score)
+    db.session.add(new_score)
+    db.session.commit()
+
+    return redirect(url_for('leaderboard'))
+
+
+@app.route('/leaderboard')
+def leaderboard():
+    scores = Score.query.order_by(Score.total_score.asc()).all()
+    return render_template('leaderboard.html', scores=scores)
 
 
 if __name__ == '__main__':
