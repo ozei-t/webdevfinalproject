@@ -7,6 +7,8 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 genius = Genius('WgL88zDw74vN0BHApKBu4Mfoz_EObXEFHKgxUlfdIhUcgZFvp5Vi7RcL0hs8J3rL', timeout=10)
+genius.remove_section_headers = True
+genius.excluded_terms = ["(Remix)", "(Live)"] 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db' 
 db = SQLAlchemy(app)
 
