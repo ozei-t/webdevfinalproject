@@ -29,37 +29,43 @@ def index():
 def search():
     artist_name = request.form.get('artist')
     if artist_name:
-        # Get the sorted songs
         sorted_songs = get_artist_songs_by_pop(artist_name, 2)
         if sorted_songs:
             # Return URL of results page
-            return render_template('results.html', artist=artist_name, sorted_songs=sorted_songs)
+            song_lyrics = {}
+            for song in sorted_songs:
+                song_title = song.get('title')
+                song_obj = genius.search_song(song_title, artist_name)
+                if song_obj:
+                    song_lyrics[song_title] = random.choice(song_obj.lyrics.split('\n')) 
+                else:
+                    song_lyrics[song_title] = "Lyrics not found"
+            return render_template('results.html', artist=artist_name, song_lyrics=song_lyrics)
     return 'No Songs Found for artist'
     
 
 
-@app.route('/results/<artist>', methods=['POST'])
+@app.route('/results/<artist>', methods = ['POST'])
 def results(artist):
-    sorted_songs_json = request.form.get('sorted_songs')
-    if sorted_songs_json:
-        sorted_songs = json.loads(sorted_songs_json)
-        song_lyrics = {}
-        for song in sorted_songs:
-            song_title = song.get('title')
-            song_obj = genius.search_song(song_title, artist, get_full_info=False)
-            if song_obj:
-                lyrics_lines = song_obj.lyrics.split('\n')
-                chosen_line = random.choice(lyrics_lines)
-                # Check if the chosen line becomes empty after stripping all whitespace characters
-                while not re.sub(r'\s+', '', chosen_line):
+        sorted_songs_json = request.form.get('sorted_songs')
+        if sorted_songs_json:
+            sorted_songs = json.loads(sorted_songs_json)
+            song_lyrics = {}
+            for song in sorted_songs:
+                song_title = song.get('title')
+                song_obj = genius.search_song(song_title, artist, get_full_info=False)
+                if song_obj:
+                    lyrics_lines = song_obj.lyrics.split('\n')
                     chosen_line = random.choice(lyrics_lines)
-                song_lyrics[song_title] = chosen_line
-            else:
-                song_lyrics[song_title] = "Lyrics not found"
-        return render_template('results.html', artist=artist, song_lyrics=song_lyrics, sorted_songs=sorted_songs)  # Ensure song_lyrics is passed to the template
-    else:
-        return 'Sorted songs not found'
-
+                    # Check if the chosen line becomes empty after stripping all whitespace characters
+                    while not re.sub(r'\s+', '', chosen_line):
+                        chosen_line = random.choice(lyrics_lines)
+                    song_lyrics[song_title] = chosen_line
+                else:
+                    song_lyrics[song_title] = "Lyrics not found"
+            return render_template('results.html', artist=artist, song_lyrics=song_lyrics)
+        else:
+            return 'Sorted songs not found'
     
 
 def get_artist_songs_by_pop(artist_name, max_songs=None):#change max song to none later 2 for test speed
