@@ -6,9 +6,7 @@ import re
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-genius = Genius('WgL88zDw74vN0BHApKBu4Mfoz_EObXEFHKgxUlfdIhUcgZFvp5Vi7RcL0hs8J3rL', timeout=10)
-genius.remove_section_headers = True
-genius.excluded_terms = ["(Remix)", "(Live)"] 
+genius = Genius('WgL88zDw74vN0BHApKBu4Mfoz_EObXEFHKgxUlfdIhUcgZFvp5Vi7RcL0hs8J3rL', timeout=50)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db' 
 db = SQLAlchemy(app)
 
@@ -29,7 +27,7 @@ def index():
 def search():
     artist_name = request.form.get('artist')
     if artist_name:
-        sorted_songs = get_artist_songs_by_pop(artist_name, 10)
+        sorted_songs = get_artist_songs_by_pop(artist_name, 4)
         if sorted_songs:
             # Return URL of results page
             song_lyrics = {}

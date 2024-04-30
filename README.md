@@ -5,7 +5,7 @@ install in terminal
 
 pip install lyricsgenius
 
-py -m pip install Flask
+python -m pip install Flask
 
 pip install Flask-SQLAlchemy
 
