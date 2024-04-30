@@ -29,7 +29,7 @@ def index():
 def search():
     artist_name = request.form.get('artist')
     if artist_name:
-        sorted_songs = get_artist_songs_by_pop(artist_name, 2)
+        sorted_songs = get_artist_songs_by_pop(artist_name, 10)
         if sorted_songs:
             # Return URL of results page
             song_lyrics = {}
@@ -51,6 +51,8 @@ def results(artist):
         if sorted_songs_json:
             sorted_songs = json.loads(sorted_songs_json)
             song_lyrics = {}
+            genius.remove_section_headers = True
+            genius.excluded_terms = ["(Remix)", "(Live)"]
             for song in sorted_songs:
                 song_title = song.get('title')
                 song_obj = genius.search_song(song_title, artist, get_full_info=False)
