@@ -141,6 +141,7 @@
         document.getElementById("incorrectMessage").innerHTML = "<span style='color: green;'>Correct!</span> You took " + elapsedTime + " seconds.";
         document.getElementById("nextSongButton").style.display = "flex"; // Show the button
         document.getElementById("skipButton").style.display = "none"; // Hide the skip button
+        document.getElementById("songForm").style.display = "none";
         stopTimer(); // Stop the timer
         let score = Math.max(60 - elapsedTime, 0); // Calculate the score for the song
         scores.push(score);
@@ -155,7 +156,7 @@
     } else {
         document.getElementById("incorrectMessage").style.display = "flex"
         document.getElementById("incorrectMessage").innerHTML = "<span style='color: red;'>Incorrect, try again!</span>";
-        scores.push(o);
+        scores.push(0);
         console.log("Scores array:", scores);
     }
     document.getElementById("guessedSong").value = "";
@@ -167,6 +168,7 @@ document.getElementById("skipButton").addEventListener("click", function() {
         placeholdlyric = currentSong;
         document.getElementById("placehold").innerHTML = placeholdlyric;
         clearInterval(timerInterval); 
+        scores.push(0);
     } else {
         alert("No more songs to skip!");
         calculateTotalScore();
