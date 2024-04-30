@@ -16,6 +16,15 @@
       height: 100vh;
       background-color: #f2f2f2;
     }
+    
+    h1 {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #333; /* Example color */
+    }
+
+
 
     .timer {
       font-size: 18px;
@@ -24,6 +33,11 @@
     #placehold,
     #songForm {
       display: none; /* Initially hide all these elements */
+    }
+
+    .name-input {
+            display: none; 
+            margin-top: 20px;
     }
     </style>
 </head>
@@ -38,6 +52,7 @@
         {% endfor %}
     </ul> -->
     <p id="placehold" class="hide"></p>
+    <p id="totalScore" class="hide"></p>
     <form id="songForm" class="hide">
         <label for="guessedSong">Enter your guess for the song:</label><br>
         <input type="text" id="guessedSong" name="guessedSong" required><br>
@@ -47,7 +62,11 @@
     <button id="skipButton">Skip Song</button>
     <p id="incorrectMessage" ></p>
     <button id="nextSongButton" class="hide">Next Song</button>
-
+    <div id="name-input" class="name-input">
+        <label for="playerName">Enter your name:</label><br>
+        <input type="text" id="playerName" name="playerName" required><br>
+        <button id="submitScore">Submit Score</button>
+    </div>
 <script>
     let songs = {};
     let scores = [];
@@ -151,6 +170,7 @@
             document.getElementById("placehold").innerHTML = placeholdlyric;
         } else {
             alert("All songs guessed!");
+            stopTimer();
             // You can add further actions here when all songs are guessed
         }
     } else {
@@ -171,7 +191,9 @@ document.getElementById("skipButton").addEventListener("click", function() {
         scores.push(0);
     } else {
         alert("No more songs to skip!");
+        stopTimer();
         calculateTotalScore();
+        displayEndGame();
     }
 });
 
@@ -185,14 +207,28 @@ document.getElementById("nextSongButton").addEventListener("click", function() {
     } else {
         alert("No more songs to play!");
         calculateTotalScore();
+        displayEndGame();
     }
 });
 function calculateTotalScore() {
 
   console.log("Scores array:", scores);
   let totalScore = scores.reduce((acc, cur) => acc + cur, 0); // Directly add all scores
-  let totalScoreFormatted = `${totalScore} seconds`; // Format as seconds
-  alert("Total Score: " + totalScoreFormatted);
+  let totalScoreFormatted = `${totalScore}`; 
+  return totalScoreFormatted
+}
+function displayEndGame() {
+        document.getElementById("timer").style.display = "none";
+        document.getElementById("skipButton").style.display = "none";
+        document.getElementById("songForm").style.display = "none";
+        document.getElementById("incorrectMessage").style.display = "none";
+        document.getElementById("currentSong").style.display = "none";
+        document.getElementById("showLyricButton").style.display = "none";
+        document.querySelector('h1').style.display = 'none';
+        document.getElementById("totalScore").innerHTML = "Your Total Score is: " + calculateTotalScore(); + "!!";
+        document.getElementById("totalScore").style.display = "flex"; // Show name input
+        document.getElementById("name-input").style.display = "block"; // Show name input
+
 }
 
 </script>
