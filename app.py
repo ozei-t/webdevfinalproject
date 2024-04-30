@@ -6,9 +6,19 @@ import re
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-genius = Genius('WgL88zDw74vN0BHApKBu4Mfoz_EObXEFHKgxUlfdIhUcgZFvp5Vi7RcL0hs8J3rL', timeout=50)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db' 
 db = SQLAlchemy(app)
+
+genius = Genius(
+    access_token="WgL88zDw74vN0BHApKBu4Mfoz_EObXEFHKgxUlfdIhUcgZFvp5Vi7RcL0hs8J3rL",
+    timeout=50,
+    verbose=True,
+    remove_section_headers=True,
+    skip_non_songs=True,
+    excluded_terms=["(Remix)", "(Live)"],
+    replace_default_terms=True,
+    retries=3
+)
 
 class Score(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -43,19 +53,21 @@ def search():
     
 
 
-@app.route('/results/<artist>', methods = ['POST'])
+@app.route('/results/<artist>', methods=['POST'])
 def results(artist):
-        sorted_songs_json = request.form.get('sorted_songs')
-        if sorted_songs_json:
-            sorted_songs = json.loads(sorted_songs_json)
-            song_lyrics = {}
-            genius.remove_section_headers = True
-            genius.excluded_terms = ["(Remix)", "(Live)"]
-            for song in sorted_songs:
-                song_title = song.get('title')
-                song_obj = genius.search_song(song_title, artist, get_full_info=False)
-                if song_obj:
-                    lyrics_lines = song_obj.lyrics.split('\n')
+    sorted_songs_json = request.form.get('sorted_songs')
+    if sorted_songs_json:
+        sorted_songs = json.loads(sorted_songs_json)
+        song_lyrics = {}
+        for song in sorted_songs:
+            song_title = song.get('title')
+            song_obj = genius.search_song(song_title, artist, get_full_info=True)
+            if song_obj:
+                song_url = song_obj.url
+                # Using Genius.lyrics instead of scraping the lyrics manually
+                lyrics = genius.lyrics(song_url=song_url, remove_section_headers=True)
+                if lyrics:
+                    lyrics_lines = lyrics.split('\n')
                     chosen_line = random.choice(lyrics_lines)
                     # Check if the chosen line becomes empty after stripping all whitespace characters
                     while not re.sub(r'\s+', '', chosen_line):
@@ -63,9 +75,11 @@ def results(artist):
                     song_lyrics[song_title] = chosen_line
                 else:
                     song_lyrics[song_title] = "Lyrics not found"
-            return render_template('results.html', artist=artist, song_lyrics=song_lyrics)
-        else:
-            return 'Sorted songs not found'
+            else:
+                song_lyrics[song_title] = "Song not found"
+        return render_template('results.html', artist=artist, song_lyrics=song_lyrics)
+    else:
+        return 'Sorted songs not found'
     
 
 def get_artist_songs_by_pop(artist_name, max_songs=None):#change max song to none later 2 for test speed
