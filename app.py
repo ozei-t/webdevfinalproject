@@ -37,15 +37,23 @@ def index():
 def search():
     artist_name = request.form.get('artist')
     if artist_name:
-        sorted_songs = get_artist_songs_by_pop(artist_name, 4)
+        sorted_songs = get_artist_songs_by_pop(artist_name, 10)
         if sorted_songs:
             # Return URL of results page
             song_lyrics = {}
             for song in sorted_songs:
-                song_title = song.get('title')
-                song_obj = genius.search_song(song_title, artist_name)
-                if song_obj:
-                    song_lyrics[song_title] = random.choice(song_obj.lyrics.split('\n')) 
+                id = song.id;
+                song_title = song.title
+                print("Processing song:", song_title)  # Add this line to print the song title
+                # Using Genius.lyrics instead of scraping the lyrics manually
+                lyrics = genius.lyrics(song_id=id, remove_section_headers=True)
+                if lyrics:
+                    lyrics_lines = lyrics.split('\n')
+                    chosen_line = re.sub(r'\u2028|\u2029|\u200B', '', random.choice(lyrics_lines))
+                    # Check if the chosen line becomes empty after stripping all whitespace characters
+                    while len(re.sub(r'\s', '', chosen_line)) == 0:
+                        chosen_line = re.sub(r'\u2028|\u2029|\u200B', '', random.choice(lyrics_lines))
+                    song_lyrics[song_title] = chosen_line
                 else:
                     song_lyrics[song_title] = "Lyrics not found"
             return render_template('results.html', artist=artist_name, song_lyrics=song_lyrics)
@@ -53,51 +61,17 @@ def search():
     
 
 
-@app.route('/results/<artist>', methods=['POST'])
-def results(artist):
-    sorted_songs_json = request.form.get('sorted_songs')
-    if sorted_songs_json:
-        sorted_songs = json.loads(sorted_songs_json)
-        song_lyrics = {}
-        for song in sorted_songs:
-            song_title = song.get('title')
-            song_obj = genius.search_song(song_title, artist, get_full_info=True)
-            if song_obj:
-                song_url = song_obj.url
-                # Using Genius.lyrics instead of scraping the lyrics manually
-                lyrics = genius.lyrics(song_url=song_url, remove_section_headers=True)
-                if lyrics:
-                    lyrics_lines = lyrics.split('\n')
-                    chosen_line = random.choice(lyrics_lines)
-                    # Check if the chosen line becomes empty after stripping all whitespace characters
-                    while not re.sub(r'\s+', '', chosen_line):
-                        chosen_line = random.choice(lyrics_lines)
-                    song_lyrics[song_title] = chosen_line
-                else:
-                    song_lyrics[song_title] = "Lyrics not found"
-            else:
-                song_lyrics[song_title] = "Song not found"
-        return render_template('results.html', artist=artist, song_lyrics=song_lyrics)
-    else:
-        return 'Sorted songs not found'
     
 
 def get_artist_songs_by_pop(artist_name, max_songs=None):#change max song to none later 2 for test speed
     try:
         artist = genius.search_artist(artist_name, max_songs=max_songs)
         if artist:
-            songs = []
-            page = 1
-            while page:
-                request = genius.artist_songs(artist.id, sort='popularity', per_page=50, page=page)
-                if 'next_page' not in request or len(request['songs']) == 0:
-                    break
-                songs.extend(request['songs'])
-                page = request['next_page']
-
+            print(artist.songs)
+            songs = artist.songs
             # Sort the songs
-            sorted_songs = sorted(songs, key=lambda x: x.get('popularity', 0), reverse=True)
-            return sorted_songs
+            # sorted_songs = sorted(songs, key=lambda x: x.get('popularity', 0), reverse=True)
+            return songs
     except Exception as e:
         print(f"An error occurred while fetching songs: {e}")
         return None
