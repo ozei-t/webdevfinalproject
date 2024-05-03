@@ -63,9 +63,11 @@
     <p id="incorrectMessage" ></p>
     <button id="nextSongButton" class="hide">Next Song</button>
     <div id="name-input" class="name-input">
-        <label for="playerName">Enter your name:</label><br>
-        <input type="text" id="playerName" name="playerName" required><br>
-        <button id="submitScore">Submit Score</button>
+        <form id="leaderboardname" action="/submit-score" method="post"></form>
+            <label for="playerName">Enter your name:</label><br>
+            <input type="text" id="playerName" name="playerName" required><br>
+            <button id="submitScore">Submit Score</button>
+        </form>
     </div>
 <script>
     let songs = {};
@@ -212,25 +214,8 @@ document.getElementById("nextSongButton").addEventListener("click", function() {
         displayEndGame();
     }
 });
-document.getElementById("submitScore").addEventListener("click", function() {
-    let playerName = document.getElementById("playerName").value;
-    let totalScore = calculateTotalScore();
-
-    // Make an AJAX request to submit the score to the server
-    let xhr = new XMLHttpRequest();
-    xhr.open("POST", "/submit-score", true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-            if (xhr.status === 200) {
-                // Redirect to the leaderboard page
-                window.location.href = "/leaderboard";
-            } else {
-                console.error("Error submitting score:", xhr.responseText);
-            }
-        }
-    };
-    xhr.send(JSON.stringify({ playerName: playerName, totalScore: totalScore }));
+document.getElementById("leaderboardname").addEventListener("click", function() {
+    
 });
 
 function calculateTotalScore() {
@@ -254,6 +239,19 @@ function displayEndGame() {
         document.getElementById("name-input").style.display = "block"; // Show name input
 
 }
+
+var input = document.createElement("input");
+
+input.setAttribute("type","hidden");
+
+input.setAttribute("artist_name",artist);
+
+input.setAttribute("score",calculateTotalScore());
+
+input.setAttribute("type","hidden");
+
+document.getElementById("leaderboardname").appendChild(input);
+
 
 </script>
 </body>

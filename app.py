@@ -18,21 +18,23 @@ genius = Genius(
     replace_default_terms=True,
     retries=3
 )
-
-connection= sqlite3.connect("leaderboard.db")
-print("connect to db success")
-cursor =connection.cursor()
-cursor.execute("create table leaderboard(artist_name text, user text, score integer)")
-print("created db success")
 #
 
-for row in cursor.execute("select * from leaderboard"):
-    print(row)
 
-cursor.execute("select * from leaderboard where artist_name =: a", {"c": })
-leaderboard_search =cursor.fetch()
+ #   connection= sqlite3.connect("leaderboard.db")
+#    print("connect to db success")
+#    cursor =connection.cursor()
+ #   cursor.execute("create table leaderboard(artist_name text, user text, score integer)")
+  #  print("created db success")
 
-for i in leaderboard_search:
+
+   # for row in cursor.execute("select * from leaderboard"):
+    #    print(row)
+
+   # cursor.execute("select * from leaderboard where artist_name =: a", {"a": })
+   # leaderboard_search =cursor.fetch()
+
+    #for i in leaderboard_search:
 
 #
 
@@ -46,7 +48,7 @@ def index():
 def search():
     artist_name = request.form.get('artist')
     if artist_name:
-        sorted_songs = get_artist_songs_by_pop(artist_name, 10)
+        sorted_songs = get_artist_songs_by_pop(artist_name, 2)
         if sorted_songs:
             # Return URL of results page
             song_lyrics = {}
@@ -88,8 +90,8 @@ def get_artist_songs_by_pop(artist_name, max_songs=None):#change max song to non
 @app.route('/submit-score', methods=['POST'])
 def submit_score():
     cursor.execute("insert into leaderboard values(?,?,?)")
-    name = request.form.get('playerName')
-    total_score = int(request.form.get('totalScore'))
+    user = request.form.get('playerName')
+    
 
     new_score = Score(name=name, total_score=total_score)
     db.session.add(new_score)
@@ -104,7 +106,7 @@ def leaderboard():
     return render_template('leaderboard.html', scores=scores)
 
 
-connection.close
+#connection.close
 
 if __name__ == '__main__':
     app.run(debug=True)
