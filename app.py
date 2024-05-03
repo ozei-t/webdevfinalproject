@@ -3,11 +3,10 @@ from lyricsgenius import Genius
 import random
 import json
 import re
-from flask_sqlalchemy import SQLAlchemy
+import sqlite3
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db' 
-db = SQLAlchemy(app)
 
 genius = Genius(
     access_token="WgL88zDw74vN0BHApKBu4Mfoz_EObXEFHKgxUlfdIhUcgZFvp5Vi7RcL0hs8J3rL",
@@ -20,12 +19,22 @@ genius = Genius(
     retries=3
 )
 
-class Score(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    total_score = db.Column(db.Integer, nullable=False)
+connection= sqlite3.connect("leaderboard.db")
+print("connect to db success")
+cursor =connection.cursor()
+cursor.execute("create table leaderboard(artist_name text, user text, score integer)")
+print("created db success")
+#
+cursor.execute("insert into leaderboard values(?,?,?)")
+for row in cursor.execute("select * from leaderboard"):
+    print(row)
 
-with app.app_context(): db.create_all()
+cursor.execute("select * from leaderboard where artist_name =: a", {"c": })
+leaderboard_search =cursor.fetch()
+
+for i in leaderboard_search:
+
+#
 
 sorted_songs = []
 
@@ -93,6 +102,8 @@ def leaderboard():
     scores = Score.query.order_by(Score.total_score.asc()).all()
     return render_template('leaderboard.html', scores=scores)
 
+
+connection.close
 
 if __name__ == '__main__':
     app.run(debug=True)
