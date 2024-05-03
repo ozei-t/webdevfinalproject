@@ -21,12 +21,6 @@ genius = Genius(
 #
 
 
- #   connection= sqlite3.connect("leaderboard.db")
-#    print("connect to db success")
-#    cursor =connection.cursor()
- #   cursor.execute("create table leaderboard(artist_name text, user text, score integer)")
-  #  print("created db success")
-
 
    # for row in cursor.execute("select * from leaderboard"):
     #    print(row)
@@ -55,13 +49,12 @@ def search():
             for song in sorted_songs:
                 id = song.id;
                 song_title = song.title
-                print("Processing song:", song_title)  # Add this line to print the song title
-                # Using Genius.lyrics instead of scraping the lyrics manually
+                print("Processing song:", song_title)  
                 lyrics = genius.lyrics(song_id=id, remove_section_headers=True)
                 if lyrics:
                     lyrics_lines = lyrics.split('\n')
                     chosen_line = re.sub(r'\u2028|\u2029|\u200B', '', random.choice(lyrics_lines))
-                    # Check if the chosen line becomes empty after stripping all whitespace characters
+                    
                     while len(re.sub(r'\s', '', chosen_line)) == 0:
                         chosen_line = re.sub(r'\u2028|\u2029|\u200B', '', random.choice(lyrics_lines))
                     song_lyrics[song_title] = chosen_line
@@ -89,24 +82,48 @@ def get_artist_songs_by_pop(artist_name, max_songs=None):#change max song to non
 
 @app.route('/submit-score', methods=['POST'])
 def submit_score():
-    cursor.execute("insert into leaderboard values(?,?,?)")
-    user = request.form.get('playerName')
+    connection= sqlite3.connect("leaderboard.db")
+    print("connect to db success")
+    cursor =connection.cursor()
+    cursor.execute("CREATE TABLE IF NOT EXISTS leaderboard(artist_name text, user text, score integer)")
     
-
-    new_score = Score(name=name, total_score=total_score)
-    db.session.add(new_score)
-    db.session.commit()
-
+    artist_name = request.form.get('artist_name')
+    name = request.form.get('playerName')
+    score = request.form.get('score')
+    cursor.execute("insert into leaderboard values(?,?,?)",(artist_name, name, score))
+    connection.commit()
+        
+    connection.close
     return redirect(url_for('leaderboard'))
 
 
 @app.route('/leaderboard')
 def leaderboard():
-    scores = Score.query.order_by(Score.total_score.asc()).all()
+    connection= sqlite3.connect("leaderboard.db")
+    print("connect to db success")
+    cursor =connection.cursor()
+    select_task_by_priority(connection, arti)
+    
     return render_template('leaderboard.html', scores=scores)
 
 
-#connection.close
+
+
+def select_task_by_priority(connnection, priority):
+    """
+    Query tasks by priority
+    :param conn: the Connection object
+    :param priority:
+    :return:
+    """
+    connection= sqlite3.connect("leaderboard.db")
+    cursor =connection.cursor()
+    cursor.execute("SELECT * FROM leaderboard WHERE priority=?", (priority,))
+
+    rows = cursor.fetchall()
+
+    for row in rows:
+        print(row)
 
 if __name__ == '__main__':
     app.run(debug=True)
