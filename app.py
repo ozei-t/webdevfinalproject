@@ -25,7 +25,7 @@ cursor =connection.cursor()
 cursor.execute("create table leaderboard(artist_name text, user text, score integer)")
 print("created db success")
 #
-cursor.execute("insert into leaderboard values(?,?,?)")
+
 for row in cursor.execute("select * from leaderboard"):
     print(row)
 
@@ -87,6 +87,7 @@ def get_artist_songs_by_pop(artist_name, max_songs=None):#change max song to non
 
 @app.route('/submit-score', methods=['POST'])
 def submit_score():
+    cursor.execute("insert into leaderboard values(?,?,?)")
     name = request.form.get('playerName')
     total_score = int(request.form.get('totalScore'))
 
