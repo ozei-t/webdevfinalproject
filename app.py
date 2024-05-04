@@ -98,12 +98,16 @@ def submit_score():
 
 @app.route('/leaderboard')
 def leaderboard():
-    connection= sqlite3.connect("leaderboard.db")
-    print("connect to db success")
-    cursor =connection.cursor()
+    connection = sqlite3.connect("leaderboard.db")
+    cursor = connection.cursor()
     
-    return render_template('leaderboard.html')
-
+    
+    cursor.execute("SELECT * FROM leaderboard ORDER BY score DESC")
+    leaderboard_data = cursor.fetchall()
+    
+    connection.close()  
+    
+    return render_template('leaderboard.html', leaderboard_data=leaderboard_data)
 
 
 if __name__ == '__main__':

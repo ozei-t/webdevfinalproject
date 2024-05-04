@@ -8,16 +8,22 @@
 <body>
     <h1>Leaderboard</h1>
     <table>
-        <tr>
-            <th>Name</th>
-            <th>Total Score</th>
-        </tr>
-        {% for score in scores %}
-        <tr>
-            <td>{{ score.name }}</td>
-            <td>{{ score.total_score }}</td>
-        </tr>
-        {% endfor %}
+        <thead>
+            <tr>
+                <th>Artist Name</th>
+                <th>User</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in leaderboard_data %}
+            <tr>
+                <td>{{ row[0] }}</td> 
+                <td>{{ row[1] }}</td> 
+                <td>{{ row[2] }}</td> 
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
 </body>
 </html>
