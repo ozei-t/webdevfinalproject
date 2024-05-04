@@ -82,18 +82,30 @@ def get_artist_songs_by_pop(artist_name, max_songs=None):#change max song to non
 
 @app.route('/submit-score', methods=['POST'])
 def submit_score():
-    connection= sqlite3.connect("leaderboard.db")
-    print("connect to db success")
-    cursor =connection.cursor()
-    cursor.execute("CREATE TABLE IF NOT EXISTS leaderboard(artist_name TEXT, user TEXT, score INTEGER)")
-
-    artist_name = request.form.get('artist')
-    name = request.form.get('playerName')
-    score = request.form.get('score')
-    cursor.execute("INSERT INTO leaderboard VALUES (?, ?, ?)", (artist_name, name, score))
-    connection.commit()
-
-    return redirect(url_for('leaderboard'))
+    try:
+        connection = sqlite3.connect("leaderboard.db")
+        print("Connected to database successfully")
+        cursor = connection.cursor()
+        
+        cursor.execute("CREATE TABLE IF NOT EXISTS leaderboard(artist_name TEXT, user TEXT, score TEXT)")
+        
+        print("Form data:", request.form)
+        
+        artist_name = request.form.get('artist')
+        name = request.form.get('playerName')
+        score = request.form.get('score')
+        
+        print("Received data:", artist_name, name, score)  # Debug statement
+        
+        cursor.execute("INSERT INTO leaderboard VALUES (?, ?, ?)", (artist_name, name, score))
+        connection.commit()
+        
+        connection.close()  
+        
+        return redirect(url_for('leaderboard'))
+    except Exception as e:
+        print("An error occurred:", e)  # Debug statement
+        return "An error occurred while submitting the score.", 500
 
 
 @app.route('/leaderboard')

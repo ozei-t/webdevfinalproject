@@ -67,7 +67,7 @@
             <label for="playerName">Enter your name:</label><br>
             <input type="text" id="playerName" name="playerName" required><br>
             <input type="hidden" id="artist" name="artist" value= "{{ artist }}">
-            <input type="hidden" id="score" name="score" value="finalscore">
+            <input type="hidden" id="score" name="score">
             <button id="submitScore">Submit Score</button>
         </form>
     </div>
@@ -249,9 +249,11 @@ document.addEventListener("DOMContentLoaded", function() {
         
         // Calculate total score
         var finalScore = calculateTotalScore();
+        console.log("Final Score:", finalScore);
         
         // Set the value of the hidden input field to the calculated score
         document.getElementById("score").value = finalScore;
+        console.log("Score Value:", document.getElementById("score").value);
         
         // Submit the form
         document.getElementById("leaderboardname").submit();
