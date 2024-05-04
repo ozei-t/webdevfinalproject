@@ -87,7 +87,7 @@ def submit_score():
         print("Connected to database successfully")
         cursor = connection.cursor()
         
-        cursor.execute("CREATE TABLE IF NOT EXISTS leaderboard(artist_name TEXT, user TEXT, score TEXT)")
+        cursor.execute("CREATE TABLE IF NOT EXISTS leaderboard(artist_name TEXT, user TEXT, score INTEGER)")
         
         print("Form data:", request.form)
         

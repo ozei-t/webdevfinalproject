@@ -68,7 +68,7 @@
             <input type="text" id="playerName" name="playerName" required><br>
             <input type="hidden" id="artist" name="artist" value= "{{ artist }}">
             <input type="hidden" id="score" name="score">
-            <button id="submitScore">Submit Score</button>
+            <button id="submitScore" type="submit">Submit Score</button>
         </form>
     </div>
 <script>
@@ -226,6 +226,7 @@ function calculateTotalScore() {
   let totalScoreFormatted = `${totalScore}`; 
   return totalScoreFormatted
 }
+var finalScore = calculateTotalScore();
 function displayEndGame() {
         document.getElementById("timer").style.display = "none";
         document.getElementById("skipButton").style.display = "none";
@@ -238,27 +239,45 @@ function displayEndGame() {
         document.getElementById("totalScore").innerHTML = "Your Total Score is: " + calculateTotalScore(); + "!!";
         document.getElementById("totalScore").style.display = "flex"; // Show name input
         document.getElementById("name-input").style.display = "block"; // Show name input
+        finalScore = calculateTotalScore();
+        console.log(finalScore)
 
 }
 
 
 document.addEventListener("DOMContentLoaded", function() {
     // Add event listener to the submit button
-    document.getElementById("submitScore").addEventListener("click", function(event) {
-        event.preventDefault(); // Prevent default form submission
+    var submitButton = document.getElementById("submitScore");
+    if (submitButton) {
+        submitButton.addEventListener("click", function(event) {
+            event.preventDefault(); // Prevent default form submission
+            
+            // Calculate total score
         
-        // Calculate total score
-        var finalScore = calculateTotalScore();
-        console.log("Final Score:", finalScore);
-        
-        // Set the value of the hidden input field to the calculated score
-        document.getElementById("score").value = finalScore;
-        console.log("Score Value:", document.getElementById("score").value);
-        
-        // Submit the form
-        document.getElementById("leaderboardname").submit();
-    });
+            console.log("Final Score:", finalScore); // Log the final score
+            
+            // Set the value of the hidden input field to the calculated score
+            var scoreInput = document.getElementById("score");
+            if (scoreInput) {
+                scoreInput.value = finalScore;
+                console.log("Score Value:", scoreInput.value); // Log the value of the score
+                
+                // Submit the form
+                var form = document.getElementById("leaderboardname");
+                if (form) {
+                    form.submit();
+                } else {
+                    console.error("Form element not found");
+                }
+            } else {
+                console.error("Score input element not found");
+            }
+        });
+    } else {
+        console.error("Submit button not found");
+    }
 });
+
 
 
 </script>
