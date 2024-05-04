@@ -85,15 +85,14 @@ def submit_score():
     connection= sqlite3.connect("leaderboard.db")
     print("connect to db success")
     cursor =connection.cursor()
-    cursor.execute("CREATE TABLE IF NOT EXISTS leaderboard(artist_name text, user text, score integer)")
-    
-    artist_name = request.form.get('artist_name')
+    cursor.execute("CREATE TABLE IF NOT EXISTS leaderboard(artist_name TEXT, user TEXT, score INTEGER)")
+
+    artist_name = request.form.get('artist')
     name = request.form.get('playerName')
     score = request.form.get('score')
-    cursor.execute("insert into leaderboard values(?,?,?)",(artist_name, name, score))
+    cursor.execute("INSERT INTO leaderboard VALUES (?, ?, ?)", (artist_name, name, score))
     connection.commit()
-        
-    connection.close
+
     return redirect(url_for('leaderboard'))
 
 
@@ -102,28 +101,10 @@ def leaderboard():
     connection= sqlite3.connect("leaderboard.db")
     print("connect to db success")
     cursor =connection.cursor()
-    select_task_by_priority(connection, arti)
     
-    return render_template('leaderboard.html', scores=scores)
+    return render_template('leaderboard.html')
 
 
-
-
-def select_task_by_priority(connnection, priority):
-    """
-    Query tasks by priority
-    :param conn: the Connection object
-    :param priority:
-    :return:
-    """
-    connection= sqlite3.connect("leaderboard.db")
-    cursor =connection.cursor()
-    cursor.execute("SELECT * FROM leaderboard WHERE priority=?", (priority,))
-
-    rows = cursor.fetchall()
-
-    for row in rows:
-        print(row)
 
 if __name__ == '__main__':
     app.run(debug=True)

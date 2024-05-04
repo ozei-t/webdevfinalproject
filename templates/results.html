@@ -66,10 +66,14 @@
         <form id="leaderboardname" action="/submit-score" method="post"></form>
             <label for="playerName">Enter your name:</label><br>
             <input type="text" id="playerName" name="playerName" required><br>
+            <input type="hidden" id="artist" name="artist" value= "{{ artist }}">
+            <input type="hidden" id="score" name="score" value="finalscore">
             <button id="submitScore">Submit Score</button>
         </form>
     </div>
 <script>
+    
+    document.getElementById("score").value = score;
     let songs = {};
     let scores = [];
     {% for song, lyric in song_lyrics.items() %}
@@ -214,9 +218,6 @@ document.getElementById("nextSongButton").addEventListener("click", function() {
         displayEndGame();
     }
 });
-document.getElementById("leaderboardname").addEventListener("click", function() {
-    
-});
 
 function calculateTotalScore() {
 
@@ -240,16 +241,22 @@ function displayEndGame() {
 
 }
 
-var input = document.createElement("input");
 
-input.setAttribute("type","hidden");
-
-input.setAttribute("artist_name",artist);
-
-input.setAttribute("score",calculateTotalScore());
-
-
-document.getElementById("leaderboardname").appendChild(input);
+document.addEventListener("DOMContentLoaded", function() {
+    // Add event listener to the submit button
+    document.getElementById("submitScore").addEventListener("click", function(event) {
+        event.preventDefault(); // Prevent default form submission
+        
+        // Calculate total score
+        var finalScore = calculateTotalScore();
+        
+        // Set the value of the hidden input field to the calculated score
+        document.getElementById("score").value = finalScore;
+        
+        // Submit the form
+        document.getElementById("leaderboardname").submit();
+    });
+});
 
 
 </script>
